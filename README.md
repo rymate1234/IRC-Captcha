@@ -16,5 +16,5 @@ This serves as an example of using IrcClientCore as an IRC bot
 ## Usage
 
 1. Download latest zip from releases
-2. Create an appsettings.json (example in repo)
+2. Unzip and edit appsettings.json (example in repo)
 3. Run `IrcCaptcha.dll` with .NET Core 
