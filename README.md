@@ -18,3 +18,13 @@ This serves as an example of using IrcClientCore as an IRC bot
 1. Download EXE from releases
 2. Create an appsettings.json (example in repo)
 3. Run with .NET Core 
+
+## Developing
+
+Either open in your favourite C# IDE (VS / VS Code, Jetbrains Rider) or use the
+standard .NET build tools: 
+
+```
+$ dotnet restore
+$ dotnet run --project ConsoleIrcClient
+```

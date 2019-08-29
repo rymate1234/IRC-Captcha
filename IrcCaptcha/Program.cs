@@ -44,18 +44,10 @@ namespace IrcCaptcha
             {
                 new ChannelHandler(config, _socket, (e.NewItems[0] as Channel)?.Name).Init();
             };
-            
-            // Setup and start timer...
             var mre = new ManualResetEvent(false);
 
-            // This is optional - if you want to allow the code to exit from the command line, you could add something like:
-            ThreadPool.QueueUserWorkItem( (state) =>
-            {
-                while(!_socket.ReadOrWriteFailed) { }
+            _socket.HandleDisconnect += irc => { mre.Set(); };
 
-                mre.Set();
-            });
-   
             // The main thread can just wait on the wait handle, which basically puts it into a "sleep" state, and blocks it forever
             mre.WaitOne();
         }
@@ -107,7 +99,12 @@ namespace IrcCaptcha
             
             var user = e.NewItems[0] as User;
             
-            if (user == null || _config.GetSection("Settings")["WhitelistedNicks"].Contains(user.Nick)) return;
+            if 
+            (
+                user == null || 
+                _config.GetSection("Settings")["WhitelistedNicks"].Contains(user.Nick) || 
+                tracked.ContainsKey(user.Nick)
+            ) return;
             
             var timeout = Convert.ToInt32(_config.GetSection("Settings")["Timeout"]);
 
@@ -130,6 +127,7 @@ namespace IrcCaptcha
                 SendMessage($"/mode {_name} +i");
                 Thread.Sleep(60 * 1000);
                 SendMessage($"/mode {_name} -i");
+                tracked.Remove(user.Nick);
             });
         }
     }
